@@ -2,31 +2,26 @@
 
 class Game {
   constructor(initialState) {
-    this.board = initialState
-      ? this.cloneBoard(initialState)
-      : this.createEmptyBoard();
+    if (initialState) {
+      this.board = initialState.map((row) => [...row]);
+      this.status = 'playing';
+    } else {
+      this.board = Array.from({ length: 4 }, () => Array(4).fill(0));
+      this.status = 'idle';
+    }
     this.score = 0;
-    this.status = 'idle';
-  }
-
-  createEmptyBoard() {
-    return Array.from({ length: 4 }, () => Array(4).fill(0));
-  }
-
-  cloneBoard(matrix) {
-    return matrix.map((row) => [...row]);
-  }
-
-  getScore() {
-    return this.score;
   }
 
   getState() {
-    return this.board;
+    return this.board.map((row) => [...row]);
   }
 
   getStatus() {
     return this.status;
+  }
+
+  getScore() {
+    return this.score;
   }
 
   start() {
@@ -38,7 +33,7 @@ class Game {
   }
 
   restart() {
-    this.board = this.createEmptyBoard();
+    this.board = Array.from({ length: 4 }, () => Array(4).fill(0));
     this.score = 0;
     this.status = 'playing';
     this.addRandomTile();
@@ -46,33 +41,28 @@ class Game {
   }
 
   slideLeft(row) {
-    let filtered = row.filter((val) => val !== 0);
+    let arr = row.filter((val) => val !== 0);
 
-    for (let i = 0; i < filtered.length - 1; i++) {
-      if (filtered[i] === filtered[i + 1]) {
-        filtered[i] *= 2;
-        this.score += filtered[i];
-        filtered[i + 1] = 0;
+    for (let i = 0; i < arr.length - 1; i++) {
+      if (arr[i] === arr[i + 1]) {
+        arr[i] *= 2;
+        this.score += arr[i];
+        arr[i + 1] = 0;
         i++;
       }
     }
+    arr = arr.filter((val) => val !== 0);
 
-    filtered = filtered.filter((val) => val !== 0);
-
-    while (filtered.length < 4) {
-      filtered.push(0);
+    while (arr.length < 4) {
+      arr.push(0);
     }
 
-    return filtered;
+    return arr;
   }
 
   moveLeft() {
-    if (this.status !== 'playing' && this.status !== 'idle') {
+    if (this.status !== 'playing') {
       return false;
-    }
-
-    if (this.status === 'idle') {
-      this.status = 'playing';
     }
 
     let moved = false;
@@ -90,18 +80,18 @@ class Game {
 
     if (moved) {
       this.addRandomTile();
-      this.updateGameStatus();
+      this.checkGameStatus();
     }
 
     return moved;
   }
 
   moveRight() {
-    this.reverseRows();
+    this.board.forEach((row) => row.reverse());
 
     const moved = this.moveLeft();
 
-    this.reverseRows();
+    this.board.forEach((row) => row.reverse());
 
     return moved;
   }
@@ -118,24 +108,19 @@ class Game {
 
   moveDown() {
     this.transpose();
-    this.reverseRows();
+    this.board.forEach((row) => row.reverse());
 
     const moved = this.moveLeft();
 
-    this.reverseRows();
+    this.board.forEach((row) => row.reverse());
     this.transpose();
 
     return moved;
   }
 
-  reverseRows() {
-    this.board.forEach((row) => row.reverse());
-  }
-
   transpose() {
-    this.board = this.board[0].map((_, colIndex) => {
-      return this.board.map((row) => row[colIndex]);
-    });
+    this.board = this.board[0].map((_, colIdx) =>
+      this.board.map((row) => row[colIdx]));
   }
 
   addRandomTile() {
@@ -157,7 +142,7 @@ class Game {
     }
   }
 
-  updateGameStatus() {
+  checkGameStatus() {
     for (let r = 0; r < 4; r++) {
       for (let c = 0; c < 4; c++) {
         if (this.board[r][c] === 2048) {
@@ -173,7 +158,11 @@ class Game {
         if (this.board[r][c] === 0) {
           return;
         }
+      }
+    }
 
+    for (let r = 0; r < 4; r++) {
+      for (let c = 0; c < 4; c++) {
         if (c < 3 && this.board[r][c] === this.board[r][c + 1]) {
           return;
         }
@@ -188,4 +177,4 @@ class Game {
   }
 }
 
-module.exports = Game;
+export default Game;
