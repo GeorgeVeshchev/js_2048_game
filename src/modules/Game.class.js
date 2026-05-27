@@ -119,8 +119,9 @@ class Game {
   }
 
   transpose() {
-    this.board = this.board[0].map((_, colIdx) =>
-      this.board.map((row) => row[colIdx]));
+    this.board = this.board[0].map((_, colIdx) => {
+      return this.board.map((row) => row[colIdx]);
+    });
   }
 
   addRandomTile() {

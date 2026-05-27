@@ -14,7 +14,7 @@ const loseMessage = document.querySelector('.message-lose');
 function updateUI() {
   const board = game.getState();
   const score = game.getScore();
-  const status = game.getStatus();
+  const gameSt = game.getStatus();
 
   let index = 0;
 
@@ -37,7 +37,7 @@ function updateUI() {
   }
 
   if (startButton) {
-    if (status === 'playing' || status === 'win' || status === 'lose') {
+    if (gameSt === 'playing' || gameSt === 'win' || gameSt === 'lose') {
       startButton.classList.add('restart');
     } else {
       startButton.classList.remove('restart');
@@ -48,11 +48,11 @@ function updateUI() {
   winMessage?.classList.add('hidden');
   loseMessage?.classList.add('hidden');
 
-  if (status === 'win') {
+  if (gameSt === 'win') {
     winMessage?.classList.remove('hidden');
-  } else if (status === 'lose') {
+  } else if (gameSt === 'lose') {
     loseMessage?.classList.remove('hidden');
-  } else if (status === 'idle') {
+  } else if (gameSt === 'idle') {
     startMessage?.classList.remove('hidden');
   }
 }
@@ -68,26 +68,26 @@ if (startButton) {
   });
 }
 
-window.addEventListener('keydown', (event) => {
+window.addEventListener('keydown', (e) => {
   if (game.getStatus() !== 'playing') {
     return;
   }
 
   let moved = false;
 
-  if (event.key === 'ArrowLeft') {
+  if (e.key === 'ArrowLeft') {
     moved = game.moveLeft();
   }
 
-  if (event.key === 'ArrowRight') {
+  if (e) {
     moved = game.moveRight();
   }
 
-  if (event.key === 'ArrowUp') {
+  if (e.key === 'ArrowUp') {
     moved = game.moveUp();
   }
 
-  if (event.key === 'ArrowDown') {
+  if (e.key === 'ArrowDown') {
     moved = game.moveDown();
   }
 
